@@ -15,7 +15,7 @@ router.get("/", (req, res) => {
   res.send("kuku");
 });
 
-router.get("/:branch_id", (req, res) => {
+router.get("/languages/branch=:branch_id", (req, res) => {
   connection.query(
     "select distinct(l._id), l.name from branches b, menus m, categories c, dishes d, dishes_tr dtr, languages l\
     where b.menu_id = m._id\
@@ -36,6 +36,20 @@ router.get("/:branch_id", (req, res) => {
         res.json(error);
       } else {
         res.json(results);
+      }
+    }
+  );
+});
+
+router.get("/branch/branch=:branch_id", (req, res) => {
+  connection.query(
+    "select c._id as client_id, c.name as client_name, c.description as client_description, b.name as branch_name, b.description as branch_description, m.name as menu_name, m.description as menu_description from clients c, branches b, menus m where c._id=b.client_id and m._id = b.menu_id and b._id = ?",
+    [req.params.branch_id],
+    (error, results, fields) => {
+      if (error) {
+        res.json(error);
+      } else {
+        res.json(results[0]);
       }
     }
   );
