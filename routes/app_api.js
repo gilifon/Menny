@@ -16,7 +16,7 @@ router.get("/", (req, res) => {
 
 router.get("/languages/branch=:branch_id", (req, res) => {
   connection.query(
-    "select distinct(l._id), l.name from branches b, menus m, categories c, dishes d, dishes_tr dtr, languages l\
+    "select distinct(l._id), l.name, l.direction from branches b, menus m, categories c, dishes d, dishes_tr dtr, languages l\
     where b.menu_id = m._id\
     and m._id = c.menu_id\
     and c._id = d.category_id\
@@ -25,7 +25,7 @@ router.get("/languages/branch=:branch_id", (req, res) => {
     and b._id = ?\
     GROUP by l._id\
     UNION\
-    select l._id, l.name from languages l, branches b, clients cl\
+    select l._id, l.name, l.direction from languages l, branches b, clients cl\
     where b.client_id = cl._id\
     and cl.default_language_id = l._id\
     and b._id = ?",
@@ -60,8 +60,9 @@ router.get("/branch/branch=:branch_id", (req, res) => {
 router.get("/menu/branch=:branch_id/language=:language_id", (req, res) => {
   connection.query(
     "SELECT\
-    c._id category_id, d._id dish_id,\
-    ctr.name category_name, ctr.description category_description, dtr.name dish_name, dtr.description dish_description, d.price dish_price\
+    c._id category_id, d._id dish_id, l._id as language_id,\
+    ctr.name category_name, ctr.description category_description, dtr.name dish_name, dtr.description dish_description, d.price dish_price,\
+    l.name as language_name, l.direction as language_direction\
     FROM \
     branches b, branches_tr btr, categories c, categories_tr ctr, dishes d, dishes_tr dtr, menus m, menus_tr mtr, languages l\
     WHERE\
@@ -88,6 +89,7 @@ router.get("/menu/branch=:branch_id/language=:language_id", (req, res) => {
 router.get("/menu/branch=:branch_id", (req, res) => {
   connection.query(
     "SELECT\
+    c._id category_id, d._id dish_id,\
     c.name category_name, c.description category_description, d.name dish_name, d.description dish_description, d.price dish_price\
     FROM\
     branches b, branches_tr btr, categories c, dishes d, menus m\
@@ -102,6 +104,20 @@ router.get("/menu/branch=:branch_id", (req, res) => {
         res.json(error);
       } else {
         res.json(results);
+      }
+    }
+  );
+});
+
+router.get("/language/language=:language_id", (req, res) => {
+  connection.query(
+    "select l._id as language_id, l.name as language_name, l.direction as language_direction from languages l where l._id = ?",
+    [req.params.language_id],
+    (error, results, fields) => {
+      if (error) {
+        res.json(error);
+      } else {
+        res.json(results[0]);
       }
     }
   );

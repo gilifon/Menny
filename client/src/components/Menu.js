@@ -1,46 +1,59 @@
 import React, { Component } from "react";
 import API from "../services/API";
+import Category from "./Category";
 
 export class Menu extends Component {
   state = {
-    client_data: null,
-    menu: []
+    client_data: [],
+    menu: [],
+    language: []
   };
   async componentDidMount() {
     const client_data = await API.GetBranch(this.props.branch_id);
     this.setState({ client_data });
     if (this.state.client_data.client_default_language.toString() === this.props.language_id.toString())
     {
-      const menu = await API.GetDefaultMenu(this.props.branch_id, this.props.language_id);
-      this.setState({ menu });
+      API.GetDefaultMenu(this.props.branch_id, this.props.language_id).then(rawMenu=>{
+        this.setState({ menu: this.parseMenu(rawMenu) });
+      });      
     }
     else
     {
-      const menu = await API.GetMenu(this.props.branch_id, this.props.language_id);
-      this.setState({ menu });
+      API.GetMenu(this.props.branch_id, this.props.language_id).then(rawMenu => {
+        this.setState({ menu: this.parseMenu(rawMenu) });
+      });
     }
-    
-    // API.FilterList(this.props.branch_id, this.props.language_id).then(res => {
-    //   //this.setState({ menuInfo: res });
-    //   const map = new Map();
-    //   let categories = [];
-
-    //   for (const dish of res) {
-    //     if (!map.has(dish.category_id)) {
-    //       map.set(dish.category_id, true); // set any value to Map
-    //       categories.push({
-    //         category_id: dish.category_id,
-    //         category_name: dish.category_name
-    //       });
-    //     }
-    //   }
-    // });
+    API.GetLanguage(this.props.language_id).then(language => {
+      this.setState({ language:language });
+    });
   }
 
+  parseMenu(menu){
+    const map = new Map();
+      let parsedMenu = [];
+      for (const menuItem of menu) {
+        //check if it exists
+        if (!map.has(menuItem.category_id)) {
+          //if not - set it
+          map.set(menuItem.category_id, true);
+          //and add the category
+          parsedMenu.push({
+            category_id: menuItem.category_id,
+            category_name: menuItem.category_name,
+            category_description: menuItem.category_description,
+            dishes: menu.filter(p=>p.category_id === menuItem.category_id)
+          });
+        }
+      }      
+      return parsedMenu;
+    }
+
   render() {
+
     return <div>
-      Branch ID: {this.props.branch_id} <br/>
-      Language ID: {this.props.language_id} <br/>
+      {this.state.menu.map(category=>(
+        <Category key={category.category_id} category={category} language={this.state.language}></Category>
+      ))}
     </div>;
   }
 }
