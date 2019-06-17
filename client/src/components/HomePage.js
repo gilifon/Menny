@@ -11,9 +11,7 @@ export class HomePage extends Component {
     API.GetLanguages(this.props.branch_id).then(res => {
       this.setState({ languages: res });
     });
-    API.GetBranch(this.props.branch_id).then(res => {
-      console.log(res);
-      
+    API.GetBranch(this.props.branch_id).then(res => {      
       this.setState({ clientData: res });
     });
   }
@@ -21,16 +19,16 @@ export class HomePage extends Component {
   render() {
     return (
       <div className="container p-4 text-center">
-        <h1>{this.state.clientData.client_name}</h1>
-        <h2>{this.state.clientData.menu_name}</h2>
-        {this.state.languages.map(item => (
+        <h1 className="mb-2">{this.state.clientData.client_name}</h1>
+        <h4 className="mb-5">{this.state.clientData.client_description}</h4>
+        {this.state.languages.map(language => (
           <a
-            key={item._id}
+            key={language._id}
             className="btn btn-primary m-2"
-            href={"/" + this.props.branch_id + "/" + item._id}
+            href={"/" + this.props.branch_id + "/" + language._id}
             role="button"
           >
-            {item.name}
+            {language.name}
           </a>
         ))}
       </div>

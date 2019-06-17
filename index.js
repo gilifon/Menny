@@ -1,15 +1,10 @@
 const express = require("express"); //easy routing
 const path = require("path");
-const exphbs = require("express-handlebars");
 const http = require("http");
 const logger = require("./middleware/logger");
 const cors = require("./middleware/cors");
 
 const app = express();
-
-app.set("views", path.join(__dirname, "views"));
-app.engine("handlebars", exphbs({ defaultLayout: "main.handlebars" }));
-app.set("view engine", "handlebars");
 
 /************************************* Middlewares *********************************/
 //use Middleware

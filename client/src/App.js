@@ -7,7 +7,7 @@ export class App extends Component {
   render() {
     return (
       <Switch>
-        <Route
+        <Route exact
           path="/:branch_id"
           render={props => (
             <HomePage branch_id={props.match.params.branch_id} />
