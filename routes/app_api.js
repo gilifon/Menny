@@ -29,7 +29,7 @@ router.get("/languages/branch=:branch_id", (req, res) => {
     where b.client_id = cl._id\
     and cl.default_language_id = l._id\
     and b._id = ?",
-    [req.params.branch_id, req.params.branch_id],
+    [req.params.branch_id,req.params.branch_id],
     (error, results, fields) => {
       if (error) {
         res.json(error);
@@ -52,6 +52,56 @@ router.get("/branch/branch=:branch_id", (req, res) => {
         res.json(error);
       } else {
         res.json(results[0]);
+      }
+    }
+  );
+});
+
+router.get("/menu/branch=:branch_id/language=:language_id", (req, res) => {
+  connection.query(
+    "SELECT\
+    c._id category_id, d._id dish_id,\
+    ctr.name category_name, ctr.description category_description, dtr.name dish_name, dtr.description dish_description, d.price dish_price\
+    FROM \
+    branches b, branches_tr btr, categories c, categories_tr ctr, dishes d, dishes_tr dtr, menus m, menus_tr mtr, languages l\
+    WHERE\
+    b.menu_id = m._id\
+    and m._id = c.menu_id\
+    and c._id = ctr.category_id\
+    and c._id = d.category_id\
+    and d._id = dtr.dish_id\
+    and dtr.language_id = l._id\
+    and dtr.language_id = l._id\
+    and l._id = ?\
+    and b._id = ?",
+    [req.params.language_id, req.params.branch_id],
+    (error, results, fields) => {
+      if (error) {
+        res.json(error);
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+router.get("/menu/branch=:branch_id", (req, res) => {
+  connection.query(
+    "SELECT\
+    c.name category_name, c.description category_description, d.name dish_name, d.description dish_description, d.price dish_price\
+    FROM\
+    branches b, branches_tr btr, categories c, dishes d, menus m\
+    WHERE\
+    b.menu_id = m._id\
+    and m._id = c.menu_id\
+    and c._id = d.category_id\
+    and b._id = ?",
+    [req.params.branch_id],
+    (error, results, fields) => {
+      if (error) {
+        res.json(error);
+      } else {
+        res.json(results);
       }
     }
   );

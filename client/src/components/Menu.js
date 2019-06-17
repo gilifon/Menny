@@ -3,18 +3,21 @@ import API from "../services/API";
 
 export class Menu extends Component {
   state = {
-    client_data: null
+    client_data: null,
+    menu: []
   };
   async componentDidMount() {
     const client_data = await API.GetBranch(this.props.branch_id);
     this.setState({ client_data });
     if (this.state.client_data.client_default_language.toString() === this.props.language_id.toString())
     {
-      console.log("default language");
+      const menu = await API.GetDefaultMenu(this.props.branch_id, this.props.language_id);
+      this.setState({ menu });
     }
     else
     {
-      console.log("not default language");
+      const menu = await API.GetMenu(this.props.branch_id, this.props.language_id);
+      this.setState({ menu });
     }
     
     // API.FilterList(this.props.branch_id, this.props.language_id).then(res => {
