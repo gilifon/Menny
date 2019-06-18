@@ -50,7 +50,7 @@ export class Menu extends Component {
 
   render() {
 
-    return <div>
+    return <div className="mt-2">
       {this.state.menu.map(category=>(
         <Category key={category.category_id} category={category} language={this.state.language}></Category>
       ))}

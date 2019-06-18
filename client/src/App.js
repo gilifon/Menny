@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Switch, Route } from "react-router-dom";
 import Menu from "./components/Menu";
 import HomePage from "./components/HomePage";
+import "./App.css"
 
 export class App extends Component {
   render() {

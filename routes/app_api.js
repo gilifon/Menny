@@ -71,8 +71,10 @@ router.get("/menu/branch=:branch_id/language=:language_id", (req, res) => {
     and c._id = ctr.category_id\
     and c._id = d.category_id\
     and d._id = dtr.dish_id\
+    and btr.language_id = l._id\
+    and ctr.language_id = l._id\
     and dtr.language_id = l._id\
-    and dtr.language_id = l._id\
+    and mtr.language_id = l._id\
     and l._id = ?\
     and b._id = ?",
     [req.params.language_id, req.params.branch_id],

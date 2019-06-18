@@ -18,7 +18,7 @@ export class HomePage extends Component {
 
   render() {
     return (
-      <div className="container p-4 text-center">
+      <div className="container p-4 text-center text-light">
         <h1 className="mb-2">{this.state.clientData.client_name}</h1>
         <h4 className="mb-5">{this.state.clientData.client_description}</h4>
         {this.state.languages.map(language => (
